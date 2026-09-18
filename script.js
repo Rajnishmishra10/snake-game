@@ -1,5 +1,5 @@
-const { isAwaitKeyword } = require("typescript");
-
+//const { isAwaitKeyword } = require("typescript");
+ 
 document.addEventListener('DOMContentLoaded', function () {
 
     const gameArena = document.getElementById("game-arena");
@@ -12,6 +12,20 @@ document.addEventListener('DOMContentLoaded', function () {
     
     let dx = cellSize; //+20 
     let dy = 0
+    let intervalId;
+    let gameSpeed = 200;
+
+    function moveFood() {
+        let newX, newY;
+
+        do {
+            newX = Math.floor(Math.random() * 30) * cellSize;
+            newY = Math.floor(Math.random() * 30) * cellSize;
+        } while(snake.some(snakeCell => snakeCell.x == newX && snakeCell.y == newY ));
+
+        food = {x: newX, y: newY};
+    }
+
 
     function updateSnake(){
         const newHead = {x:snake[0].x + dx, y:snake[0].y + dy };
@@ -20,8 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
         //check collision with food
         if(newHead.x == food.x && newHead.y == food.y) {
             score += 10;
-            // TODO: move food
-            
+            moveFood(); 
+
+            if(gameSpeed > 50) {
+                clearInterval(intervalId);
+                gameSpeed -= 10;
+                gameLoop();
+            }
 
         }else {
             snake.pop(); // Remove tail
@@ -32,10 +51,10 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Key passed", e);
         const isGoingDown = dy == cellSize;
         const isGoingUP = dy == -cellSize;
-        const isGoingLeft = dy == cellSize;
-        const isGoingRight = dy == -cellSize;
+        const isGoingLeft = dx == -cellSize;
+        const isGoingRight = dx == cellSize;
 
-        if(e.kay == 'ArrowUp' && !isGoingDown) {
+        if(e.key == 'ArrowUp' && !isGoingDown) {
             dx = 0;
             dy = -cellSize;
         } else if(e.key == 'ArrowDown' && !isGoingUP) {
@@ -50,6 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
             dy = 0;
         }
     }
+
     function drawDiv(x, y, className) {
         const divElement = document.createElement('div');;
         divElement.classList.add(className);
@@ -71,19 +91,46 @@ document.addEventListener('DOMContentLoaded', function () {
         gameArena.appendChild(foodElement);
     }
 
+    function IsGameOver() {
+        // snake collision checks
+        for (let i = 1; i < snake.length; i++) {
+            if(snake[0].x == snake[i].x && snake[0].y == snake[i].y ){
+                return true;
+            }
+        }
+
+        // wall collision checks
+        const hitLeftWall = snake[0].x < 0; // snake[0] ==> head
+        const hitRightWall = snake[0].x > arenaSize - cellSize; 
+        const hitTopWall = snake[0].y < 0;
+        const hitButtonWall = snake[0].y > arenaSize - cellSize;
+        return hitLeftWall || hitRightWall || hitTopWall || hitButtonWall;
+
+    }
+
     function gameLoop() {
-        setInterval(() => {
+        intervalId = setInterval(() => {
+            if(IsGameOver()){
+                clearInterval(intervalId);
+                gameStarted = false;
+                return; 
+            }
             updateSnake();
             drawFoodAndSnake();
-        }, 200);
+        }, gameSpeed);
     }
 
     function runGame() {
         if(!gameStarted) {
             gameStarted = true;
-            document.addEventListener('Keyword', changeDirection);
+            document.addEventListener('keydown', changeDirection);
+
             gameLoop(); //TODO: Implement game loop
         }
+    }
+
+    function drawScoredBoard() {
+        
     }
 
     function initiateGame() {
