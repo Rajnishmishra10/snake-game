@@ -46,6 +46,8 @@ In this game, the player controls a snake that moves around the board, eats food
 
 ## 📸 Screenshot
 
+![alt text](snake-game.png) 
+
 *Add a screenshot of your game here.*
 
 ## 📄 License
