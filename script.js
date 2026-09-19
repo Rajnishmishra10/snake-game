@@ -113,10 +113,12 @@ document.addEventListener('DOMContentLoaded', function () {
             if(IsGameOver()){
                 clearInterval(intervalId);
                 gameStarted = false;
+                alert('Game Over' + '\n' + 'your Score: ' + score);
                 return; 
             }
             updateSnake();
             drawFoodAndSnake();
+            drawScoredBoard();
         }, gameSpeed);
     }
 
@@ -130,7 +132,8 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function drawScoredBoard() {
-        
+        const scoreBoard = document.getElementById('score-board');
+        scoreBoard.textContent = `score: ${score}`;
     }
 
     function initiateGame() {
