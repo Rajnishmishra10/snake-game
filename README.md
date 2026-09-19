@@ -48,8 +48,6 @@ In this game, the player controls a snake that moves around the board, eats food
 
 ![alt text](snake-game.png) 
 
-*Add a screenshot of your game here.*
-
 ## 📄 License
 
 This project is open-source and available under the MIT License.
